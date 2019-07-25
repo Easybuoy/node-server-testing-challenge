@@ -96,4 +96,28 @@ router.get("/users", verifyToken, async (req, res) => {
   return res.status(200).json({ status: "success", data: users });
 });
 
+router.delete("/users/:id", async (req, res) => {
+  const { id } = req.params;
+
+  const existingUser = await User.getById(id);
+
+  if (existingUser) {
+    const deleteUser = await User.remove(id);
+
+    if (deleteUser === 1) {
+      return res
+        .status(200)
+        .json({ status: "success", message: "User deleted successfully" });
+    } else {
+      return res
+        .status(500)
+        .json({ status: "error", message: "Unable to delete user" });
+    }
+  } else {
+    return res
+      .status(404)
+      .json({ status: "error", message: "User not found" });
+  }
+});
+
 module.exports = router;
